@@ -1,6 +1,9 @@
 package mtransform
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type Transform [3][3]float64
 
@@ -26,11 +29,17 @@ func NewTransform() *Transform {
 
 func MultiplyTransforms(a Transform, b Transform) Transform {
 	var t Transform
-	for i := 0; i < 3; i++ {
-		for j := 0; j < 3; j++ {
-			t[i][j] = t[i][j] + a[i][j]*b[j][i]
+
+	for i := 0; i <= 2; i++ {
+		for j := 0; j <= 2; j++ {
+			sum := 0.0
+			for k := 0; k <= 2; k++ {
+				sum = sum + a[i][k]*b[k][j]
+			}
+			t[i][j] = sum
 		}
 	}
+
 	return t
 }
 
@@ -49,7 +58,10 @@ func (t *Transform) Translate(x float64, y float64) {
 
 	a[0][2] = x
 	a[1][2] = y
+	fmt.Printf("Translate() before: %v\n", t)
+	fmt.Printf("Translate() a: %v\n", a)
 	t.MultiplyWith(a)
+	fmt.Printf("Translate() after MultiplyWith: %v\n", t)
 }
 
 func (t *Transform) RotateOrigin(angle float64) {
